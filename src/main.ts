@@ -8,4 +8,4 @@ async function bootstrap() {
   const port = configService.get<number>('PORT', 3000);
   await app.listen(port);
 }
-bootstrap();
+bootstrap().catch((err) => console.error('Failed to start server:', err));
