@@ -5,7 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { getDatabaseConfig } from './config/database.config';
 import { AlertEvent } from './entities/alert-event.entity';
-import { AlertEventsController } from './controllers/alerts.controller';
+import { AlertEventsController } from './controllers/alerts-events.controller';
 
 @Module({
   imports: [
