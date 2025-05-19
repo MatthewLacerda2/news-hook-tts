@@ -6,7 +6,7 @@ import {
 } from 'typeorm';
 
 @Entity('alerts')
-export class Alert {
+export class AlertRequest {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
