@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class 1747684809578CreateAlertEvents.ts1747684831536 implements MigrationInterface {
-    name = '1747684809578CreateAlertEvents.ts1747684831536'
+export class CreateAlertEvents1747685553005 implements MigrationInterface {
+    name = 'CreateAlertEvents1747685553005'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "alert_events" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "payload" jsonb NOT NULL, CONSTRAINT "PK_f8dd833a0534d3a01e8d01e3bca" PRIMARY KEY ("id"))`);
