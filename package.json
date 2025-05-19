@@ -21,7 +21,7 @@
     "typeorm": "ts-node ./node_modules/typeorm/cli",
     "migration:run": "npm run typeorm migration:run -- -d src/config/dataSource.ts",
     "migration:revert": "npm run typeorm migration:revert -- -d src/config/dataSource.ts",
-    "migration:generate": "npm run typeorm migration:generate -- -d src/config/dataSource.ts"
+    "migration:generate": "npm run typeorm -- -d src/config/dataSource.ts migration:generate"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
