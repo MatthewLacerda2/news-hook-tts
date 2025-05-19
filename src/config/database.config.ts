@@ -1,6 +1,6 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
-import { AlertPrompt } from '../alerts/entities/alert-prompt.entity';
+import { Alert } from '../entities/alert.entity';
 
 export const getDatabaseConfig = (
   configService: ConfigService,
@@ -11,7 +11,7 @@ export const getDatabaseConfig = (
   username: configService.get('DATABASE_USER'),
   password: configService.get('DATABASE_PASSWORD'),
   database: configService.get('DATABASE_NAME'),
-  entities: [AlertPrompt],
+  entities: [Alert],
   synchronize: false, // Set to false in production
   logging: true,
 });

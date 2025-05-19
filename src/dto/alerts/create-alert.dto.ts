@@ -1,4 +1,10 @@
-import { IsString, IsBoolean, IsOptional, IsObject, IsDate } from 'class-validator';
+import {
+  IsString,
+  IsBoolean,
+  IsOptional,
+  IsObject,
+  IsDate,
+} from 'class-validator';
 
 export class CreateAlertDto {
   @IsString()
