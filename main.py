@@ -1,58 +1,48 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
-from pydantic import BaseModel
-from datetime import datetime
-
+import httpx
 import models
+import schemas
 from database import engine, get_db
 
 # Create database tables
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Test Server")
+app = FastAPI(title="News Hook TTS")
 
-# Pydantic models for request/response
-class ItemBase(BaseModel):
-    name: str
-    description: str
+ALERTS_API_URL = "http://127.0.0.1:8000/api/v1/"
 
-class ItemCreate(ItemBase):
-    pass
-
-class Item(ItemBase):
-    id: int
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
-
-# CRUD operations
-@app.post("/items/", response_model=Item)
-def create_item(item: ItemCreate, db: Session = Depends(get_db)):
-    db_item = models.Item(**item.dict())
-    db.add(db_item)
+@app.post("/create-alert", response_model=dict)
+async def create_alert(
+    request: schemas.AlertPromptCreateRequest,
+    db: Session = Depends(get_db)
+):
+    # Create the alert in our database
+    db_alert = models.AlertPrompt(
+        prompt=request.prompt,
+        http_method=request.http_method,
+        is_recurring=request.is_recurring,
+        llm_model=request.llm_model,
+        max_datetime=request.max_datetime
+    )
+    db.add(db_alert)
     db.commit()
-    db.refresh(db_item)
-    return db_item
+    db.refresh(db_alert)
 
-@app.get("/items/", response_model=List[Item])
-def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    items = db.query(models.Item).offset(skip).limit(limit).all()
-    return items
-
-@app.get("/items/{item_id}", response_model=Item)
-def read_item(item_id: int, db: Session = Depends(get_db)):
-    item = db.query(models.Item).filter(models.Item.id == item_id).first()
-    if item is None:
-        raise HTTPException(status_code=404, detail="Item not found")
-    return item
-
-@app.delete("/items/{item_id}")
-def delete_item(item_id: int, db: Session = Depends(get_db)):
-    item = db.query(models.Item).filter(models.Item.id == item_id).first()
-    if item is None:
-        raise HTTPException(status_code=404, detail="Item not found")
-    db.delete(item)
-    db.commit()
-    return {"message": "Item deleted successfully"} 
+    # Forward the request to the alerts API
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.post(
+                ALERTS_API_URL + "alerts",
+                json=request.model_dump()
+            )
+            response.raise_for_status()
+            return response.json()
+        except httpx.HTTPError as e:
+            # If the forwarding fails, delete the alert from our database
+            db.delete(db_alert)
+            db.commit()
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to forward alert to alerts service: {str(e)}"
+            )
