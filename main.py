@@ -4,6 +4,7 @@ import httpx
 import models
 import schemas
 from database import engine, get_db
+from schemas import NewsAlertCreateRequest
 
 # Create database tables
 models.Base.metadata.create_all(bind=engine)
@@ -11,6 +12,10 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI(title="News Hook TTS")
 
 ALERTS_API_URL = "http://127.0.0.1:8000/api/v1/"
+
+@app.get("/news-alert-schema", response_model=dict)
+def get_news_alert_schema():
+    return NewsAlertCreateRequest.model_json_schema()
 
 @app.post("/create-alert", response_model=dict, status_code=status.HTTP_201_CREATED)
 async def create_alert(
