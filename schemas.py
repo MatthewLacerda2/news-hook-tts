@@ -15,6 +15,6 @@ class NewsAlertCreateRequest(BaseModel):
     title: str = Field(..., max_length=63)
     content: str = Field(..., max_length=2047)
     keywords: List[str]
-    entities: Optional[List[str]] = None
-    due_date: Optional[datetime] = None
-    source_url: Optional[str] = Field(None, max_length=255)
+    entities: List[str] = Field(None, allow_none=True)
+    due_date: datetime = Field(None, allow_none=True)
+    source_url: str = Field(None, max_length=255, allow_none=True)
