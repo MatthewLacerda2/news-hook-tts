@@ -105,15 +105,15 @@ def create_news_alert(
     request: schemas.NewsAlertCreateRequest,
     db: Session = Depends(get_db)
 ):
-    logger.info(f"Creating new news alert with title: {request.title}")
+    logger.info(f"Creating new news alert with title: {request.model_dump_json()}")
     # Create the news alert in our database
     db_alert = models.NewsAlert(
         title=request.title,
         content=request.content,
         keywords=request.keywords,
-        entities=request.entities,
-        due_date=request.due_date,
-        source_url = request.source_url
+        entities=request.keywords,
+        due_date=datetime.now(),
+        source_url="https://localhost:8000/",
     )
     db.add(db_alert)
     db.commit()
