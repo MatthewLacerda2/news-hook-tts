@@ -195,3 +195,4 @@ cython_debug/
 
 auxpy.py
 env.example
+header.json
